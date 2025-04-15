@@ -1,0 +1,11 @@
+{
+	"files.associations": {
+		"*.asm": "asm",
+		"*.s": "asm",
+		"*.ts": "xml",
+		"kdiroperator": "cpp",
+		"qurl": "cpp",
+		"qscrollarea": "cpp",
+		"qwidget": "cpp"
+	}
+}
