@@ -2,6 +2,7 @@
 #include <KIO/JobUiDelegateFactory>
 #include <KIO/OpenUrlJob>
 #include <KJobUiDelegate>
+#include <QMenu>
 #include <QTreeView>
 #include <QUrl>
 
@@ -10,11 +11,15 @@ DirOperator::DirOperator(const QUrl& urlName, QWidget* parent)
 {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     setFixedWidth(250);
-
     setViewMode(KFile::Detail);
-    connect(this, &DirOperator::viewChanged, this, &DirOperator::_hideHeaderView);
-    connect(this, &DirOperator::fileSelected, this, [this](const auto& item) {
+    connect(this, &DirOperator::viewChanged, [this] {
+        _hideHeaderView();
+    });
+    connect(this, &DirOperator::fileSelected, [this](const auto& item) {
         _openFile(item.url());
+    });
+    connect(this, &DirOperator::contextMenuAboutToShow, [this](const auto& item, QMenu* menu) {
+        menu->removeAction(action(OpenContainingFolder));
     });
     _hideHeaderView();
 }
