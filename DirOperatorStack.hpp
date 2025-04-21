@@ -17,7 +17,8 @@ public:
     void push(const QUrl& url);
     void home();
     void pop();
-    void clear();
+    void popUntil(DirOperatorStackItem *item);
+    inline void clear() { popUntil(nullptr); }
     DirOperatorStackItem* top() const;
     bool isEmpty() const;
 public slots:

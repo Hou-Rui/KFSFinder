@@ -36,9 +36,8 @@ void DirOperatorStack::push(const QUrl& url)
 {
     auto item = new DirOperatorStackItem(url, this);
     m_layout->addWidget(item);
-    connect(item->dirOperator(), &DirOperator::dirSelected, this, [this, item](const auto& url) {
-        while (item != top())
-            pop();
+    connect(item->dirOperator(), &DirOperator::dirSelected, [this, item](const auto& url) {
+        popUntil(item);
         push(url);
     });
     emit dirSelected(url);
@@ -60,18 +59,20 @@ void DirOperatorStack::pop()
     op->deleteLater();
 }
 
-void DirOperatorStack::clear()
+void DirOperatorStack::popUntil(DirOperatorStackItem* item)
 {
-    while (!isEmpty()) {
+    while (item != top()) {
         pop();
     }
 }
 
 DirOperatorStackItem* DirOperatorStack::top() const
 {
-    auto item = m_layout->itemAt(m_layout->count() - 1);
-    auto operatorItem = qobject_cast<DirOperatorStackItem*>(item->widget());
-    return operatorItem;
+    int last = m_layout->count() - 1;
+    if (auto item = m_layout->itemAt(last)) {
+        return static_cast<DirOperatorStackItem*>(item->widget());
+    }
+    return nullptr;
 }
 
 bool DirOperatorStack::isEmpty() const
