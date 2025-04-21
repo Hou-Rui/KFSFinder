@@ -1,35 +1,40 @@
 #include "DirOperator.hpp"
-#include <QUrl>
-#include <QTreeView>
 #include <KIO/JobUiDelegateFactory>
 #include <KIO/OpenUrlJob>
 #include <KJobUiDelegate>
+#include <QTreeView>
+#include <QUrl>
 
-DirOperator::DirOperator(const QUrl &urlName, QWidget *parent) : KDirOperator(urlName, parent) {
+DirOperator::DirOperator(const QUrl& urlName, QWidget* parent)
+    : KDirOperator(urlName, parent)
+{
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     setFixedWidth(250);
 
     setViewMode(KFile::Detail);
-    connect(this, &DirOperator::viewChanged, this, &DirOperator::hideHeaderView);
-    connect(this, &DirOperator::fileSelected, this, [this](const auto &item) {
-        openFile(item.url());
+    connect(this, &DirOperator::viewChanged, this, &DirOperator::_hideHeaderView);
+    connect(this, &DirOperator::fileSelected, this, [this](const auto& item) {
+        _openFile(item.url());
     });
-    hideHeaderView();
+    _hideHeaderView();
 }
 
-void DirOperator::selectDir(const KFileItem &item) {
+void DirOperator::selectDir(const KFileItem& item)
+{
     emit dirSelected(item.url());
 }
 
-void DirOperator::openFile(const QUrl &url) {
+void DirOperator::_openFile(const QUrl& url)
+{
     auto job = new KIO::OpenUrlJob(url, this);
-    auto mainWindow = qApp->findChild<QWidget *>("mainWindow");
+    auto mainWindow = qApp->findChild<QWidget*>("mainWindow");
     KIO::createDefaultJobUiDelegate(KJobUiDelegate::AutoHandlingEnabled, mainWindow);
     job->start();
 }
 
-void DirOperator::hideHeaderView() {
-    auto treeView = qobject_cast<QTreeView *>(view());
+void DirOperator::_hideHeaderView()
+{
+    auto treeView = qobject_cast<QTreeView*>(view());
     if (treeView != nullptr) {
         treeView->setHeaderHidden(true);
         int columnCount = treeView->model()->columnCount();

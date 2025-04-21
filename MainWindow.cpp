@@ -11,7 +11,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setObjectName("mainWindow");
-    resize(600, 400);
+    resize(800, 600);
 
     setCentralWidget(new QWidget());
     m_layout = new QVBoxLayout(centralWidget());

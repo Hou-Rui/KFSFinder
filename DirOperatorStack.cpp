@@ -1,35 +1,57 @@
 #include "DirOperatorStack.hpp"
 #include "DirOperator.hpp"
 
-#include <QUrl>
-#include <QHBoxLayout>
 #include <QDebug>
+#include <QFrame>
+#include <QHBoxLayout>
+#include <QUrl>
 
-DirOperatorStack::DirOperatorStack(QWidget *parent) : QWidget(parent) {
+DirOperatorStackItem::DirOperatorStackItem(const QUrl& url, DirOperatorStack* parent)
+    : QWidget(parent)
+{
+    m_layout = new QHBoxLayout(this);
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setSpacing(0);
+    m_layout->addWidget(m_operator = new DirOperator(url));
+    m_layout->addWidget(m_separator = new QFrame());
+    m_separator->setFrameShape(QFrame::VLine);
+    m_separator->setFrameShadow(QFrame::Sunken);
+}
+
+DirOperator* DirOperatorStackItem::dirOperator() const
+{
+    return m_operator;
+}
+
+DirOperatorStack::DirOperatorStack(QWidget* parent)
+    : QWidget(parent)
+{
     m_layout = new QHBoxLayout(this);
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(0);
     m_layout->setAlignment(Qt::AlignLeft);
 }
 
-void DirOperatorStack::push(const QUrl &url) {
-    auto op = new DirOperator(url, this);
-    m_layout->addWidget(op);
-    connect(op, &DirOperator::dirSelected, this, [this, op](const auto &url) {
-        while (op != top()) {
+void DirOperatorStack::push(const QUrl& url)
+{
+    auto item = new DirOperatorStackItem(url, this);
+    m_layout->addWidget(item);
+    connect(item->dirOperator(), &DirOperator::dirSelected, this, [this, item](const auto& url) {
+        while (item != top())
             pop();
-        }
         push(url);
     });
     emit dirSelected(url);
 }
 
-void DirOperatorStack::home() {
+void DirOperatorStack::home()
+{
     clear();
     push(QUrl::fromLocalFile(QDir::homePath()));
 }
 
-void DirOperatorStack::pop() {
+void DirOperatorStack::pop()
+{
     auto op = top();
     if (op == nullptr) {
         return;
@@ -38,29 +60,31 @@ void DirOperatorStack::pop() {
     op->deleteLater();
 }
 
-void DirOperatorStack::clear() {
+void DirOperatorStack::clear()
+{
     while (!isEmpty()) {
         pop();
     }
 }
 
-DirOperator *DirOperatorStack::top() const {
+DirOperatorStackItem* DirOperatorStack::top() const
+{
     auto item = m_layout->itemAt(m_layout->count() - 1);
-    if (item == nullptr) {
-        return nullptr;
-    }
-    return qobject_cast<DirOperator *>(item->widget());
+    auto operatorItem = qobject_cast<DirOperatorStackItem*>(item->widget());
+    return operatorItem;
 }
 
-bool DirOperatorStack::isEmpty() const {
+bool DirOperatorStack::isEmpty() const
+{
     return m_layout->isEmpty();
 }
 
-void DirOperatorStack::selectUrl(const QUrl &url) {
+void DirOperatorStack::selectUrl(const QUrl& url)
+{
     while (!isEmpty()) {
-        auto t = top();
+        auto op = top()->dirOperator();
         auto option = QUrl::StripTrailingSlash | QUrl::NormalizePathSegments;
-        if (url.matches(t->url(), option)) {
+        if (url.matches(op->url(), option)) {
             return;
         }
         pop();

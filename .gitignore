@@ -5,9 +5,11 @@ CMakeScripts
 Testing
 Makefile
 cmake_install.cmake
+build
 install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
 .vscode
+.cache
