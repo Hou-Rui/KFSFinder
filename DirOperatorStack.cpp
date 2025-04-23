@@ -40,7 +40,7 @@ void DirOperatorStack::push(const QUrl& url)
         popUntil(item);
         push(url);
     });
-    emit dirSelected(url);
+    emit urlChanged(url);
 }
 
 void DirOperatorStack::home()
@@ -80,15 +80,29 @@ bool DirOperatorStack::isEmpty() const
     return m_layout->isEmpty();
 }
 
-void DirOperatorStack::selectUrl(const QUrl& url)
+QUrl DirOperatorStack::url() const
 {
+    if (auto item = top()) {
+        return item->dirOperator()->url();
+    }
+    return QUrl {};
+}
+
+void DirOperatorStack::setUrl(const QUrl& newUrl)
+{
+    auto option = QUrl::StripTrailingSlash | QUrl::NormalizePathSegments;
+    bool topMatch = true;
     while (!isEmpty()) {
         auto op = top()->dirOperator();
-        auto option = QUrl::StripTrailingSlash | QUrl::NormalizePathSegments;
-        if (url.matches(op->url(), option)) {
-            return;
+        if (!newUrl.matches(op->url(), option)) {
+            topMatch = false;
+            pop();
+            continue;
         }
-        pop();
+        if (!topMatch) {
+            emit urlChanged(newUrl);
+        }
+        return;
     }
-    push(url);
+    push(newUrl);
 }

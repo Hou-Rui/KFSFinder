@@ -9,8 +9,10 @@ class DirOperatorStackItem;
 
 class DirOperatorStack : public QWidget {
     Q_OBJECT
+    Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
+    
 signals:
-    void dirSelected(const QUrl& url);
+    void urlChanged(const QUrl& url);
 
 public:
     explicit DirOperatorStack(QWidget* parent = nullptr);
@@ -21,8 +23,9 @@ public:
     inline void clear() { popUntil(nullptr); }
     DirOperatorStackItem* top() const;
     bool isEmpty() const;
+    QUrl url() const;
 public slots:
-    void selectUrl(const QUrl& url);
+    void setUrl(const QUrl& url);
 
 private:
     QHBoxLayout* m_layout;
