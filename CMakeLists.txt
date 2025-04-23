@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(kfsfinder LANGUAGES CXX)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 find_package(KF6KIO)
 qt_standard_project_setup()
