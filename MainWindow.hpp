@@ -15,11 +15,12 @@ public:
     explicit MainWindow(QWidget* parent = nullptr);
 
 private:
-    QVBoxLayout* m_layout;
+    QDockWidget* m_toolBarDockWidget;
+    QToolBar* m_toolBar;
     KUrlNavigator* m_urlNavigator;
     DirOperatorStack* m_stack;
     QScrollArea* m_scrollArea;
-    
+
     QDockWidget* m_placesDockWidget;
     KFilePlacesView* m_placesView;
     KFilePlacesModel* m_placesModel;
