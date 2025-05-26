@@ -16,7 +16,6 @@
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
 {
-    setObjectName("mainWindow");
     resize(1000, 600);
 
     m_toolBarDockWidget = new QDockWidget(this);

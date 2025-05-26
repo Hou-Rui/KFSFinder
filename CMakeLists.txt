@@ -7,12 +7,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 find_package(KF6KIO)
 qt_standard_project_setup()
 
-qt_add_executable(kfsfinder
-    main.cpp
-    DirOperator.cpp
-    DirOperatorStack.cpp
-    MainWindow.cpp
-)
+add_subdirectory(src)
 
 target_link_libraries(kfsfinder PRIVATE
     Qt::Core
