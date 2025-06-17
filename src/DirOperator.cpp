@@ -12,6 +12,8 @@ DirOperator::DirOperator(const QUrl& urlName, QWidget* parent)
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     setFixedWidth(250);
     setViewMode(KFile::Detail);
+    showOpenWithActions(true);
+
     connect(this, &DirOperator::viewChanged, [this] {
         _hideHeaderView();
     });
